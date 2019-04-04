@@ -117,46 +117,119 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   return newRequire;
-})({"Xd5C":[function(require,module,exports) {
+})({"ZxkV":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.makeRedisRemoteLock = void 0;
-
-var _remoteLock = require("remote-lock");
+exports.makeRemoteLock = void 0;
 
 /**
- *
- * @type {import('..').makeRedisRemoteLock}
+ * @type {import("..").makeRemoteLock}
  */
-const makeRedisRemoteLock = ({
-  redis,
-  pollingTimeout,
-  totalTimeout,
-  lockIdPrefix: _lockIdPrefix
+const makeRemoteLock = ({
+  getLock: _getLock,
+  setLock: _setLock,
+  releaseLock: _releaseLock,
+  pollingTimeout: _pollingTimeout,
+  totalTimeout: _totalTimeout
 }) => {
-  const lockIdPrefix = _lockIdPrefix || 'remote.lock.redis';
-  return (0, _remoteLock.makeRemoteLock)({
-    getLock: async () => {
-      return redis.get(lockIdPrefix);
-    },
-    setLock: async ({
-      lockId,
-      timeout
-    }) => {
-      return redis.set(lockIdPrefix, lockId, 'EX', timeout / 1000);
-    },
-    releaseLock: async () => {
-      return redis.del(lockIdPrefix);
-    },
+  return async ({
+    lockId,
+    exec,
+    skipLock,
     pollingTimeout,
     totalTimeout
-  });
-};
+  }) => {
+    console.assert(lockId != undefined, 'Lock ID is empty.');
+    pollingTimeout = pollingTimeout || _pollingTimeout || 1000;
+    totalTimeout = totalTimeout || _totalTimeout || 60000;
+    let hasLock = false;
 
-exports.makeRedisRemoteLock = makeRedisRemoteLock;
+    try {
+      hasLock = await pollForLock({
+        getLock: _getLock,
+        setLock: _setLock,
+        lockId,
+        pollingTimeout,
+        skipLock,
+        totalTimeout
+      });
+      return exec({
+        hasLock
+      });
+    } finally {
+      if (hasLock) {
+        await _releaseLock({
+          lockId
+        });
+      }
+    }
+  };
+};
+/**
+ * @param {object} input
+ * @param {(input: import("..").IGetLockInput) => Promise<string>} input.getLock
+ * @param {(input: import("..").ISetLockInput) => Promise<void>} input.setLock
+ * @param {() => Promise<boolean>=} input.skipLock
+ * @param {string} input.lockId
+ * @param {number} input.pollingTimeout
+ * @param {number} input.totalTimeout
+ */
+
+
+exports.makeRemoteLock = makeRemoteLock;
+
+async function pollForLock({
+  pollingTimeout,
+  totalTimeout,
+  skipLock,
+  lockId,
+  getLock,
+  setLock
+}) {
+  let count = 0;
+  let hasLock = false;
+  const startTime = new Date().getTime();
+
+  while (true) {
+    count++;
+
+    if (typeof skipLock === 'function' && count > 1) {
+      if (await skipLock()) {
+        break;
+      }
+    }
+
+    const currentTime = new Date().getTime();
+
+    if (currentTime - startTime > totalTimeout) {
+      throw new Error(`Failed to obtain lock after ${totalTimeout} ms.`);
+    }
+
+    const currentLockId = await getLock({
+      lockId
+    });
+
+    if (currentLockId == undefined) {
+      await setLock({
+        lockId,
+        timeout: totalTimeout
+      });
+      continue;
+    }
+
+    if (currentLockId == lockId) {
+      hasLock = true;
+      break;
+    }
+
+    await new Promise(resolve => setTimeout(resolve, pollingTimeout));
+  }
+
+  return hasLock;
+}
 },{}],"Focm":[function(require,module,exports) {
 "use strict";
 
@@ -164,15 +237,15 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _redisRemoteLock = require("./redisRemoteLock");
+var _remoteLock = require("./remoteLock");
 
-Object.keys(_redisRemoteLock).forEach(function (key) {
+Object.keys(_remoteLock).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
   Object.defineProperty(exports, key, {
     enumerable: true,
     get: function () {
-      return _redisRemoteLock[key];
+      return _remoteLock[key];
     }
   });
 });
-},{"./redisRemoteLock":"Xd5C"}]},{},["Focm"], "redisRemoteLock")
+},{"./remoteLock":"ZxkV"}]},{},["Focm"], "remoteLock")

@@ -58,6 +58,5 @@
   },
   "exclude": [
     "**/dist/",
-    "examples/"
   ]
 }

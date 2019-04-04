@@ -1,7 +1,7 @@
 import redis from 'redis'
 import uuidv4 from 'uuid/v4'
 
-import { makeRedisLock } from '../dist/index'
+import { makeRedisLock } from 'redis-remote-lock'
 
 async function redisLockTest() {
   const redisClient = redis.createClient()
