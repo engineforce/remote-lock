@@ -1,1 +1,2 @@
-export * from './remoteLock';
+export * from './remoteLock'
+export * from './redisLock'

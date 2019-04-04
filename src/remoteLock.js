@@ -6,7 +6,7 @@
  * @param {number=} input.pollingTimeout
  * @param {number=} input.totalTimeout
  */
-export const remoteLock = ({
+export const makeRemoteLock = ({
   getLock: _getLock,
   setLock: _setLock,
   releaseLock: _releaseLock,
@@ -96,7 +96,7 @@ async function pollForLock({
       break
     }
 
-    await new Promise(resolve => setTimeout(resolve, pollingTimeout))
+    await new Promise((resolve) => setTimeout(resolve, pollingTimeout))
   }
 
   return hasLock
