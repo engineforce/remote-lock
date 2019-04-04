@@ -1,5 +1,5 @@
 import uuidv4 from 'uuid/v4'
-import { makeRemoteLock } from './remoteLock'
+import { makeRemoteLock } from 'remote-lock'
 
 /**
  * @param {object} input
@@ -8,7 +8,7 @@ import { makeRemoteLock } from './remoteLock'
  * @param {number=} input.totalTimeout
  * @param {string=} input.lockIdPrefix
  */
-export const makeRedisLock = ({
+export const makeRedisRemoteLock = ({
   redis,
   pollingTimeout,
   totalTimeout,
