@@ -8,8 +8,14 @@ export const makeRemoteLock = ({
   pollingTimeout: _pollingTimeout,
   totalTimeout: _totalTimeout,
 }) => {
-  return async ({ lockId, exec, skipLock, pollingTimeout, totalTimeout }) => {
-    console.assert(lockId != undefined, 'Lock ID is empty.')
+  return async ({
+    requestId,
+    exec,
+    skipLock,
+    pollingTimeout,
+    totalTimeout,
+  }) => {
+    console.assert(requestId != undefined, 'Lock ID is empty.')
 
     pollingTimeout = pollingTimeout || _pollingTimeout || 1000
     totalTimeout = totalTimeout || _totalTimeout || 60000
@@ -20,7 +26,7 @@ export const makeRemoteLock = ({
       hasLock = await pollForLock({
         getLock: _getLock,
         setLock: _setLock,
-        lockId,
+        requestId,
         pollingTimeout,
         skipLock,
         totalTimeout,
@@ -29,7 +35,7 @@ export const makeRemoteLock = ({
       return exec({ hasLock })
     } finally {
       if (hasLock) {
-        await _releaseLock({ lockId })
+        await _releaseLock({ requestId })
       }
     }
   }
@@ -40,7 +46,7 @@ export const makeRemoteLock = ({
  * @param {(input: import("..").IGetLockInput) => Promise<string>} input.getLock
  * @param {(input: import("..").ISetLockInput) => Promise<void>} input.setLock
  * @param {() => Promise<boolean>=} input.skipLock
- * @param {string} input.lockId
+ * @param {string} input.requestId
  * @param {number} input.pollingTimeout
  * @param {number} input.totalTimeout
  */
@@ -48,7 +54,7 @@ async function pollForLock({
   pollingTimeout,
   totalTimeout,
   skipLock,
-  lockId,
+  requestId,
   getLock,
   setLock,
 }) {
@@ -69,14 +75,14 @@ async function pollForLock({
       throw new Error(`Failed to obtain lock after ${totalTimeout} ms.`)
     }
 
-    const currentLockId = await getLock({ lockId })
+    const currentRequestId = await getLock({ requestId })
 
-    if (currentLockId == undefined) {
-      await setLock({ lockId, timeout: totalTimeout })
+    if (currentRequestId == undefined) {
+      await setLock({ requestId, timeout: totalTimeout })
       continue
     }
 
-    if (currentLockId == lockId) {
+    if (currentRequestId == requestId) {
       hasLock = true
       break
     }

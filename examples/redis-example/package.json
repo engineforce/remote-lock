@@ -3,12 +3,17 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "test": "tsc"
+  },
   "keywords": [],
   "author": "Paul Li",
   "license": "MIT",
   "dependencies": {
     "redis": "^2.8.0",
-    "typescript": "^3.4.1"
+    "redis-remote-lock": "^1.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^3.4.2"
   }
 }

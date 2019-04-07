@@ -1,8 +1,12 @@
 import { IRemoteLock } from 'remote-lock'
 
 export function makeRedisRemoteLock<TOut>(input: {
-  redis: any
+  redis: {
+    get: Function
+    set: Function
+    del: Function
+  }
   pollingTimeout?: number
   totalTimeout?: number
-  lockIdPrefix?: string
+  lockKey?: string
 }): IRemoteLock<TOut>

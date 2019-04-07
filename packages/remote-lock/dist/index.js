@@ -125,55 +125,88 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.makeRemoteLock = void 0;
 
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
 /**
  * @type {import("..").makeRemoteLock}
  */
-const makeRemoteLock = ({
-  getLock: _getLock,
-  setLock: _setLock,
-  releaseLock: _releaseLock,
-  pollingTimeout: _pollingTimeout,
-  totalTimeout: _totalTimeout
-}) => {
-  return async ({
-    lockId,
-    exec,
-    skipLock,
-    pollingTimeout,
-    totalTimeout
-  }) => {
-    console.assert(lockId != undefined, 'Lock ID is empty.');
-    pollingTimeout = pollingTimeout || _pollingTimeout || 1000;
-    totalTimeout = totalTimeout || _totalTimeout || 60000;
-    let hasLock = false;
+var makeRemoteLock = function makeRemoteLock(_ref) {
+  var _getLock = _ref.getLock,
+      _setLock = _ref.setLock,
+      _releaseLock = _ref.releaseLock,
+      _pollingTimeout = _ref.pollingTimeout,
+      _totalTimeout = _ref.totalTimeout;
+  return (
+    /*#__PURE__*/
+    function () {
+      var _ref3 = _asyncToGenerator(
+      /*#__PURE__*/
+      regeneratorRuntime.mark(function _callee(_ref2) {
+        var requestId, exec, skipLock, pollingTimeout, totalTimeout, hasLock;
+        return regeneratorRuntime.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                requestId = _ref2.requestId, exec = _ref2.exec, skipLock = _ref2.skipLock, pollingTimeout = _ref2.pollingTimeout, totalTimeout = _ref2.totalTimeout;
+                console.assert(requestId != undefined, 'Lock ID is empty.');
+                pollingTimeout = pollingTimeout || _pollingTimeout || 1000;
+                totalTimeout = totalTimeout || _totalTimeout || 60000;
+                hasLock = false;
+                _context.prev = 5;
+                _context.next = 8;
+                return pollForLock({
+                  getLock: _getLock,
+                  setLock: _setLock,
+                  requestId: requestId,
+                  pollingTimeout: pollingTimeout,
+                  skipLock: skipLock,
+                  totalTimeout: totalTimeout
+                });
 
-    try {
-      hasLock = await pollForLock({
-        getLock: _getLock,
-        setLock: _setLock,
-        lockId,
-        pollingTimeout,
-        skipLock,
-        totalTimeout
-      });
-      return exec({
-        hasLock
-      });
-    } finally {
-      if (hasLock) {
-        await _releaseLock({
-          lockId
-        });
-      }
-    }
-  };
+              case 8:
+                hasLock = _context.sent;
+                return _context.abrupt("return", exec({
+                  hasLock: hasLock
+                }));
+
+              case 10:
+                _context.prev = 10;
+
+                if (!hasLock) {
+                  _context.next = 14;
+                  break;
+                }
+
+                _context.next = 14;
+                return _releaseLock({
+                  requestId: requestId
+                });
+
+              case 14:
+                return _context.finish(10);
+
+              case 15:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee, null, [[5,, 10, 15]]);
+      }));
+
+      return function (_x) {
+        return _ref3.apply(this, arguments);
+      };
+    }()
+  );
 };
 /**
  * @param {object} input
  * @param {(input: import("..").IGetLockInput) => Promise<string>} input.getLock
  * @param {(input: import("..").ISetLockInput) => Promise<void>} input.setLock
  * @param {() => Promise<boolean>=} input.skipLock
- * @param {string} input.lockId
+ * @param {string} input.requestId
  * @param {number} input.pollingTimeout
  * @param {number} input.totalTimeout
  */
@@ -181,54 +214,111 @@ const makeRemoteLock = ({
 
 exports.makeRemoteLock = makeRemoteLock;
 
-async function pollForLock({
-  pollingTimeout,
-  totalTimeout,
-  skipLock,
-  lockId,
-  getLock,
-  setLock
-}) {
-  let count = 0;
-  let hasLock = false;
-  const startTime = new Date().getTime();
+function pollForLock(_x2) {
+  return _pollForLock.apply(this, arguments);
+}
 
-  while (true) {
-    count++;
+function _pollForLock() {
+  _pollForLock = _asyncToGenerator(
+  /*#__PURE__*/
+  regeneratorRuntime.mark(function _callee2(_ref4) {
+    var pollingTimeout, totalTimeout, skipLock, requestId, getLock, setLock, count, hasLock, startTime, currentTime, currentRequestId;
+    return regeneratorRuntime.wrap(function _callee2$(_context2) {
+      while (1) {
+        switch (_context2.prev = _context2.next) {
+          case 0:
+            pollingTimeout = _ref4.pollingTimeout, totalTimeout = _ref4.totalTimeout, skipLock = _ref4.skipLock, requestId = _ref4.requestId, getLock = _ref4.getLock, setLock = _ref4.setLock;
+            count = 0;
+            hasLock = false;
+            startTime = new Date().getTime();
 
-    if (typeof skipLock === 'function' && count > 1) {
-      if (await skipLock()) {
-        break;
+          case 4:
+            if (!true) {
+              _context2.next = 28;
+              break;
+            }
+
+            count++;
+
+            if (!(typeof skipLock === 'function' && count > 1)) {
+              _context2.next = 11;
+              break;
+            }
+
+            _context2.next = 9;
+            return skipLock();
+
+          case 9:
+            if (!_context2.sent) {
+              _context2.next = 11;
+              break;
+            }
+
+            return _context2.abrupt("break", 28);
+
+          case 11:
+            currentTime = new Date().getTime();
+
+            if (!(currentTime - startTime > totalTimeout)) {
+              _context2.next = 14;
+              break;
+            }
+
+            throw new Error("Failed to obtain lock after ".concat(totalTimeout, " ms."));
+
+          case 14:
+            _context2.next = 16;
+            return getLock({
+              requestId: requestId
+            });
+
+          case 16:
+            currentRequestId = _context2.sent;
+
+            if (!(currentRequestId == undefined)) {
+              _context2.next = 21;
+              break;
+            }
+
+            _context2.next = 20;
+            return setLock({
+              requestId: requestId,
+              timeout: totalTimeout
+            });
+
+          case 20:
+            return _context2.abrupt("continue", 4);
+
+          case 21:
+            if (!(currentRequestId == requestId)) {
+              _context2.next = 24;
+              break;
+            }
+
+            hasLock = true;
+            return _context2.abrupt("break", 28);
+
+          case 24:
+            _context2.next = 26;
+            return new Promise(function (resolve) {
+              return setTimeout(resolve, pollingTimeout);
+            });
+
+          case 26:
+            _context2.next = 4;
+            break;
+
+          case 28:
+            return _context2.abrupt("return", hasLock);
+
+          case 29:
+          case "end":
+            return _context2.stop();
+        }
       }
-    }
-
-    const currentTime = new Date().getTime();
-
-    if (currentTime - startTime > totalTimeout) {
-      throw new Error(`Failed to obtain lock after ${totalTimeout} ms.`);
-    }
-
-    const currentLockId = await getLock({
-      lockId
-    });
-
-    if (currentLockId == undefined) {
-      await setLock({
-        lockId,
-        timeout: totalTimeout
-      });
-      continue;
-    }
-
-    if (currentLockId == lockId) {
-      hasLock = true;
-      break;
-    }
-
-    await new Promise(resolve => setTimeout(resolve, pollingTimeout));
-  }
-
-  return hasLock;
+    }, _callee2);
+  }));
+  return _pollForLock.apply(this, arguments);
 }
 },{}],"Focm":[function(require,module,exports) {
 "use strict";

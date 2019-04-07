@@ -1,30 +1,30 @@
 import redis from 'redis'
 import uuidv4 from 'uuid/v4'
 
-import { makeRedisLock } from 'redis-remote-lock'
+import { makeRedisRemoteLock } from 'redis-remote-lock'
 
-async function redisLockTest() {
+async function redisRemoteLockTest() {
   const redisClient = redis.createClient()
 
-  const redisLock = makeRedisLock({
+  const redisRemoteLock = makeRedisRemoteLock({
     redis: redisClient,
   })
 
-  await redisLock({
-    lockId: uuidv4(),
+  await redisRemoteLock({
+    requestId: uuidv4(),
     exec: async (hasLock) => {
       if (hasLock) {
-        await updateCache(redis)
+        await updateCache()
       }
     },
-    skipLock: async () => !(await isCacheExpired(redis)),
+    skipLock: async () => !(await isCacheExpired()),
   })
 }
 
-async function isCacheExpired(redisClient) {
+async function isCacheExpired() {
   return true
 }
 
-async function updateCache(redisClient) {
+async function updateCache() {
   return true
 }

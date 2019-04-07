@@ -15,7 +15,7 @@ export interface IRemoteLock<TOut> {
 }
 
 export interface IRemoteLockInput<TOut> {
-  lockId: string
+  requestId: string
   exec: (input: IExecInput) => Promise<TOut>
   skipLock?: () => Promise<boolean>
   pollingTimeout?: number
@@ -23,16 +23,16 @@ export interface IRemoteLockInput<TOut> {
 }
 
 export interface IGetLockInput {
-  lockId: string
+  requestId: string
 }
 
 export interface ISetLockInput {
-  lockId: string
+  requestId: string
   timeout: number
 }
 
 export interface IReleaseLockInput {
-  lockId: string
+  requestId: string
 }
 
 export interface IExecInput {
