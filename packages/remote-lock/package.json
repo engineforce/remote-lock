@@ -6,7 +6,8 @@
   "types": "index.d.ts",
   "scripts": {
     "build": "webpack -d --devtool false --output-library-target umd --output-library remoteLock --output-filename index.js",
-    "test": "tsc && jest --coverage"
+    "test": "tsc && jest --coverage",
+    "test:dev": "tsc && jest --watch"
   },
   "keywords": [],
   "author": "Paul Li",
@@ -16,6 +17,7 @@
     "@babel/preset-env": "^7.4.3",
     "babel-jest": "^24.7.1",
     "jest": "^24.7.0",
+    "lolex": "^3.1.0",
     "typescript": "^3.4.2",
     "webpack": "^4.29.6",
     "webpack-cli": "^3.3.0"

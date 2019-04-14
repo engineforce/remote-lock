@@ -71,8 +71,11 @@ async function pollForLock({
     }
 
     const currentTime = new Date().getTime()
+    console.log('******* 2', startTime, currentTime, currentTime - startTime)
     if (currentTime - startTime > totalTimeout) {
-      throw new Error(`Failed to obtain lock after ${totalTimeout} ms.`)
+      throw new Error(
+        `Timeout Error: Failed to obtain lock after ${totalTimeout} ms.`
+      )
     }
 
     const currentRequestId = await getLock()
