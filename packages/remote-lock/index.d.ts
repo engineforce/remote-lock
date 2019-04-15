@@ -3,7 +3,7 @@ export function makeRemoteLock<TOut>(
 ): IRemoteLock<TOut>
 
 export interface IMakeRemoteLockInput {
-  getLock: (input?: IGetLockInput) => Promise<string>
+  getLock: (input?: IGetLockInput) => Promise<string | undefined>
   setLock: (input: ISetLockInput) => Promise<void>
   releaseLock: (input?: IReleaseLockInput) => Promise<void>
   pollingTimeout?: number

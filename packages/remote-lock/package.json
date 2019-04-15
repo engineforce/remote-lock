@@ -6,8 +6,10 @@
   "types": "index.d.ts",
   "scripts": {
     "build": "webpack -d --devtool false --output-library-target umd --output-library remoteLock --output-filename index.js",
-    "test": "tsc && jest --coverage",
-    "test:dev": "tsc && jest --watch"
+    "test": "tsc && npm run test:unit",
+    "test:unit": "jest --testPathPattern \\.unit\\.test\\. --coverage",
+    "test:unit:dev": "jest --testPathPattern \\.unit\\.test\\. --watch",
+    "test:integration": "jest --testPathPattern \\.integration\\.test\\."
   },
   "keywords": [],
   "author": "Paul Li",

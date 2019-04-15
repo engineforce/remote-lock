@@ -164,8 +164,8 @@ describe('given remoteLock', () => {
     }
   })
 
-  describe.only('when calling remoteLock once but never get the lock', () => {
-    it('should call getLock four times', async () => {
+  describe('when calling remoteLock once but never get the lock', () => {
+    it('should call getLock 2 times', async () => {
       const { getLockMock } = await exec()
       expect(getLockMock).toHaveBeenCalledTimes(2)
     })
@@ -182,6 +182,13 @@ describe('given remoteLock', () => {
     it('should not call requests[0].exec', async () => {
       const { requests } = await exec()
       expect(requests[0].exec).toHaveBeenCalledTimes(0)
+    })
+
+    it('should throw the TimeoutError', async () => {
+      const { remoteLockMock } = await exec()
+      expect(
+        (await remoteLockMock.mock.results[0].value).error.message
+      ).toMatch(/Timeout Error/)
     })
 
     async function exec() {
@@ -218,6 +225,87 @@ describe('given remoteLock', () => {
 
           _setImmediate(() => {
             clock.tick(59001)
+          })
+        })
+      })
+
+      clock.uninstall()
+
+      return {
+        remoteLockMock,
+        getLockMock,
+        setLockMock,
+        releaseLockMock,
+        requests,
+      }
+    }
+  })
+
+  describe('when calling remoteLock once skip waiting later', () => {
+    it('should call getLock 2 times', async () => {
+      const { getLockMock } = await exec()
+      expect(getLockMock).toHaveBeenCalledTimes(2)
+    })
+
+    it('should not call setLock', async () => {
+      const { setLockMock } = await exec()
+      expect(setLockMock).toHaveBeenCalledTimes(0)
+    })
+
+    it('should not call releaseLockMock', async () => {
+      const { releaseLockMock } = await exec()
+      expect(releaseLockMock).toHaveBeenCalledTimes(0)
+    })
+
+    it('should call requests[0].exec only once without lock', async () => {
+      const { requests } = await exec()
+      expect(requests[0].exec).toHaveBeenCalledTimes(1)
+      expect(requests[0].exec.mock.calls[0][0]).toEqual({ hasLock: false })
+    })
+
+    it('should return the result of exec', async () => {
+      const { remoteLockMock } = await exec()
+      expect((await remoteLockMock.mock.results[0].value).result).toEqual(
+        'Pass'
+      )
+    })
+
+    async function exec() {
+      const {
+        remoteLockMock,
+        getLockMock,
+        setLockMock,
+        releaseLockMock,
+      } = getTestContext()
+
+      const requests = [
+        {
+          requestId: '1',
+          exec: jest.fn().mockReturnValue('Pass'),
+          skipLock: () => {
+            return getLockMock.mock.calls.length > 1
+          },
+        },
+      ]
+
+      const _setImmediate = setImmediate
+
+      const clock = lolex.install()
+
+      await new Promise((resolve, reject) => {
+        getLockMock.mockImplementation(() => {
+          return '-1'
+        })
+
+        Promise.all(requests.map((request) => remoteLockMock(request))).then(
+          resolve,
+          reject
+        )
+
+        _setImmediate(() => {
+          clock.tick(1000)
+          _setImmediate(() => {
+            clock.tick(1000)
           })
         })
       })
