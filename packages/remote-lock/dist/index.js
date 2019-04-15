@@ -168,7 +168,7 @@ const makeRemoteLock = ({
 
 /**
  * @param {object} input
- * @param {(input: import("..").IGetLockInput) => Promise<string>} input.getLock
+ * @param {(input?: import("..").IGetLockInput) => Promise<string>} input.getLock
  * @param {(input: import("..").ISetLockInput) => Promise<void>} input.setLock
  * @param {() => Promise<boolean>=} input.skipLock
  * @param {string} input.requestId
@@ -196,11 +196,14 @@ async function pollForLock({
     }
 
     const currentTime = new Date().getTime()
+    console.log('******* 2', startTime, currentTime, currentTime - startTime)
     if (currentTime - startTime > totalTimeout) {
-      throw new Error(`Failed to obtain lock after ${totalTimeout} ms.`)
+      throw new Error(
+        `Timeout Error: Failed to obtain lock after ${totalTimeout} ms.`
+      )
     }
 
-    const currentRequestId = await getLock({ requestId })
+    const currentRequestId = await getLock()
 
     if (currentRequestId == undefined) {
       await setLock({ requestId, timeout: totalTimeout })
