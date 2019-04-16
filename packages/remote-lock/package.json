@@ -1,14 +1,17 @@
 {
   "name": "remote-lock",
   "version": "1.0.0",
-  "description": "",
+  "description": "Lock your critical section using any remote or local resources such as redis or database.",
   "main": "dist/index.js",
   "types": "index.d.ts",
   "keywords": [
     "lock",
     "remote"
   ],
-  "author": "Paul Li <pong_ho80@hotmail.com>",
+  "author": {
+    "name": "engineforce",
+    "url": "https://github.com/engineforce"
+  },
   "license": "MIT",
   "homepage": "https://github.com/engineforce/remote-lock/tree/master/packages/remote-lock",
   "repository": "https://github.com/engineforce/remote-lock/tree/master/packages/remote-lock",

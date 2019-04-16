@@ -1,15 +1,25 @@
 {
   "name": "redis-remote-lock",
   "version": "1.0.0",
-  "description": "",
+  "description": "Lock your critical section using redis.",
   "main": "dist/index.js",
+  "types": "index.d.ts",
+  "keywords": [
+    "lock",
+    "remote",
+    "redis"
+  ],
+  "author": {
+    "name": "engineforce",
+    "url": "https://github.com/engineforce"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/engineforce/remote-lock/tree/master/packages/redis-remote-lock",
+  "repository": "https://github.com/engineforce/remote-lock/tree/master/packages/redis-remote-lock",
   "scripts": {
     "build": "webpack",
     "test": "tsc && jest --verbose=false"
   },
-  "keywords": [],
-  "author": "Paul Li",
-  "license": "MIT",
   "devDependencies": {
     "@babel/core": "^7.4.3",
     "@babel/preset-env": "^7.4.3",
