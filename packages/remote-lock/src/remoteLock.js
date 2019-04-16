@@ -6,21 +6,21 @@ export const makeRemoteLock = ({
   setLock: _setLock,
   releaseLock: _releaseLock,
   pollingTimeout: _pollingTimeout,
-  totalTimeout: _totalTimeout
+  totalTimeout: _totalTimeout,
 }) => {
   return async ({
     requestId,
     exec,
     skipLock,
     pollingTimeout,
-    totalTimeout
+    totalTimeout,
   }) => {
-    console.assert(requestId != undefined, 'Lock ID is empty.');
+    console.assert(requestId != undefined, 'Lock ID is empty.')
 
-    pollingTimeout = pollingTimeout || _pollingTimeout || 1000;
-    totalTimeout = totalTimeout || _totalTimeout || 60000;
+    pollingTimeout = pollingTimeout || _pollingTimeout || 1000
+    totalTimeout = totalTimeout || _totalTimeout || 60000
 
-    let hasLock = false;
+    let hasLock = false
 
     try {
       hasLock = await pollForLock({
@@ -29,17 +29,17 @@ export const makeRemoteLock = ({
         requestId,
         pollingTimeout,
         skipLock,
-        totalTimeout
-      });
+        totalTimeout,
+      })
 
-      return exec({ hasLock });
+      return exec({ hasLock })
     } finally {
       if (hasLock) {
-        await _releaseLock({ requestId });
+        await _releaseLock({ requestId })
       }
     }
-  };
-};
+  }
+}
 
 /**
  * @param {object} input
@@ -56,42 +56,42 @@ async function pollForLock({
   skipLock,
   requestId,
   getLock,
-  setLock
+  setLock,
 }) {
-  let count = 0;
-  let hasLock = false;
-  const startTime = new Date().getTime();
+  let count = 0
+  let hasLock = false
+  const startTime = new Date().getTime()
 
   while (true) {
-    count++;
+    count++
     if (typeof skipLock === 'function' && count > 1) {
       if (await skipLock()) {
-        break;
+        break
       }
     }
 
-    const currentTime = new Date().getTime();
+    const currentTime = new Date().getTime()
 
     if (currentTime - startTime > totalTimeout) {
       throw new Error(
         `Timeout Error: Paul Debug 2 Failed to obtain lock after ${totalTimeout} ms.`
-      );
+      )
     }
 
-    const currentRequestId = await getLock();
+    const currentRequestId = await getLock()
 
     if (currentRequestId == undefined) {
-      await setLock({ requestId, timeout: totalTimeout });
-      continue;
+      await setLock({ requestId, timeout: totalTimeout })
+      continue
     }
 
     if (currentRequestId == requestId) {
-      hasLock = true;
-      break;
+      hasLock = true
+      break
     }
 
-    await new Promise(resolve => setTimeout(resolve, pollingTimeout));
+    await new Promise((resolve) => setTimeout(resolve, pollingTimeout))
   }
 
-  return hasLock;
+  return hasLock
 }
