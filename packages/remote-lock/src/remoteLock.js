@@ -15,7 +15,7 @@ export const makeRemoteLock = ({
     pollingTimeout,
     totalTimeout
   }) => {
-    console.assert(requestId != undefined, "Lock ID is empty.");
+    console.assert(requestId != undefined, 'Lock ID is empty.');
 
     pollingTimeout = pollingTimeout || _pollingTimeout || 1000;
     totalTimeout = totalTimeout || _totalTimeout || 60000;
@@ -64,7 +64,7 @@ async function pollForLock({
 
   while (true) {
     count++;
-    if (typeof skipLock === "function" && count > 1) {
+    if (typeof skipLock === 'function' && count > 1) {
       if (await skipLock()) {
         break;
       }
@@ -74,7 +74,7 @@ async function pollForLock({
 
     if (currentTime - startTime > totalTimeout) {
       throw new Error(
-        `Timeout Error: Paul Debug Failed to obtain lock after ${totalTimeout} ms.`
+        `Timeout Error: Paul Debug 2 Failed to obtain lock after ${totalTimeout} ms.`
       );
     }
 
