@@ -7,7 +7,7 @@
 		exports["remoteLock"] = factory();
 	else
 		root["remoteLock"] = factory();
-})(window, function() {
+})(global, function() {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -199,7 +199,7 @@ async function pollForLock({
 
     if (currentTime - startTime > totalTimeout) {
       throw new Error(
-        `Timeout Error: Paul Debug 2 Failed to obtain lock after ${totalTimeout} ms.`
+        `Timeout Error: Paul Debug 4 Failed to obtain lock after ${totalTimeout} ms.`
       )
     }
 

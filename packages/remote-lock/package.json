@@ -13,7 +13,7 @@
   "homepage": "https://github.com/engineforce/remote-lock/tree/master/packages/remote-lock",
   "repository": "https://github.com/engineforce/remote-lock/tree/master/packages/remote-lock",
   "scripts": {
-    "build": "webpack -d --devtool false --output-library-target umd --output-library remoteLock --output-filename index.js",
+    "build": "webpack",
     "test": "tsc && npm run test:unit && npm run test:integration",
     "test:unit": "jest --testPathPattern \\.unit\\.test\\. --coverage",
     "test:unit:dev": "jest --testPathPattern \\.unit\\.test\\. --watch",
@@ -28,6 +28,7 @@
     "ramda": "^0.26.1",
     "typescript": "^3.4.2",
     "webpack": "^4.29.6",
-    "webpack-cli": "^3.3.0"
+    "webpack-cli": "^3.3.0",
+    "webpack-node-externals": "^1.7.2"
   }
 }
