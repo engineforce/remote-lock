@@ -74,7 +74,7 @@ async function pollForLock({
 
     if (currentTime - startTime > totalTimeout) {
       throw new Error(
-        `Timeout Error: Paul Debug 3 Failed to obtain lock after ${totalTimeout} ms.`
+        `Timeout Error: Paul Debug 5 Failed to obtain lock after ${totalTimeout} ms.`
       )
     }
 
