@@ -4,6 +4,14 @@
   "description": "",
   "main": "dist/index.js",
   "types": "index.d.ts",
+  "keywords": [
+    "lock",
+    "remote"
+  ],
+  "author": "Paul Li <pong_ho80@hotmail.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/engineforce/remote-lock/tree/master/packages/remote-lock",
+  "repository": "https://github.com/engineforce/remote-lock/tree/master/packages/remote-lock",
   "scripts": {
     "build": "webpack -d --devtool false --output-library-target umd --output-library remoteLock --output-filename index.js",
     "test": "tsc && npm run test:unit && npm run test:integration",
@@ -11,9 +19,6 @@
     "test:unit:dev": "jest --testPathPattern \\.unit\\.test\\. --watch",
     "test:integration": "jest --testPathPattern \\.integration\\.test\\."
   },
-  "keywords": [],
-  "author": "Paul Li",
-  "license": "MIT",
   "devDependencies": {
     "@babel/core": "^7.4.3",
     "@babel/preset-env": "^7.4.3",
