@@ -18,13 +18,16 @@
   "repository": "https://github.com/engineforce/remote-lock/tree/master/packages/redis-remote-lock",
   "scripts": {
     "build": "webpack",
-    "test": "tsc && jest --verbose=false"
+    "test": "tsc",
+    "test:integration": "docker-compose up -d && jest --testPathPattern \\.integration\\.test\\."
   },
   "devDependencies": {
     "@babel/core": "^7.4.3",
     "@babel/preset-env": "^7.4.3",
     "babel-jest": "^24.7.1",
     "jest": "^24.7.0",
+    "ramda": "^0.26.1",
+    "redis": "^2.8.0",
     "typescript": "^3.4.2",
     "webpack": "^4.29.6",
     "webpack-cli": "^3.3.0",

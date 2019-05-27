@@ -168,7 +168,7 @@ const makeRemoteLock = ({
 
 /**
  * @param {object} input
- * @param {(input?: import("..").IGetLockInput) => Promise<string | undefined>} input.getLock
+ * @param {(input: import("..").IGetLockInput) => Promise<string | undefined>} input.getLock
  * @param {(input: import("..").ISetLockInput) => Promise<void>} input.setLock
  * @param {() => Promise<boolean>=} input.skipLock
  * @param {string} input.requestId
@@ -203,7 +203,7 @@ async function pollForLock({
       )
     }
 
-    const currentRequestId = await getLock()
+    const currentRequestId = await getLock({ requestId })
 
     if (currentRequestId == undefined) {
       await setLock({ requestId, timeout: totalTimeout })

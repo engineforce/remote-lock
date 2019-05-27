@@ -3,9 +3,9 @@ export function makeRemoteLock<TOut>(
 ): IRemoteLock<TOut>
 
 export interface IMakeRemoteLockInput {
-  getLock: (input?: IGetLockInput) => Promise<string | undefined>
+  getLock: (input: IGetLockInput) => Promise<string | undefined>
   setLock: (input: ISetLockInput) => Promise<void>
-  releaseLock: (input?: IReleaseLockInput) => Promise<void>
+  releaseLock: (input: IReleaseLockInput) => Promise<void>
   pollingTimeout?: number
   totalTimeout?: number
 }
@@ -22,14 +22,18 @@ export interface IRemoteLockInput<TOut> {
   totalTimeout?: number
 }
 
-export interface IGetLockInput {}
+export interface IGetLockInput {
+  requestId: string
+}
 
 export interface ISetLockInput {
   requestId: string
   timeout: number
 }
 
-export interface IReleaseLockInput {}
+export interface IReleaseLockInput {
+  requestId: string
+}
 
 export interface IExecInput {
   hasLock: boolean

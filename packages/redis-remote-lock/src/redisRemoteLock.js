@@ -13,14 +13,60 @@ export const makeRedisRemoteLock = ({
   const lockKey = _lockKey || 'remote.lock.redis'
 
   return makeRemoteLock({
-    getLock: async () => {
-      return redis.get(lockKey)
+    getLock: async ({ requestId }) => {
+      return new Promise((resolve, reject) => {
+        redis.get(
+          lockKey,
+          /**
+           * @param {any} error
+           * @param {string} lockValue
+           */
+          (error, lockValue) => {
+            if (error) {
+              return reject(error)
+            }
+
+            return resolve(lockValue)
+          }
+        )
+      })
     },
     setLock: async ({ requestId, timeout }) => {
-      return redis.set(lockKey, requestId, 'EX', timeout / 1000)
+      return new Promise((resolve, reject) => {
+        redis.set(
+          lockKey,
+          requestId,
+          'EX',
+          timeout / 1000,
+          /**
+           * @param {any} error
+           */
+          (error) => {
+            if (error) {
+              return reject(error)
+            }
+
+            return resolve()
+          }
+        )
+      })
     },
-    releaseLock: async () => {
-      return redis.del(lockKey)
+    releaseLock: async ({ requestId }) => {
+      return new Promise((resolve, reject) => {
+        redis.del(
+          lockKey,
+          /**
+           * @param {any} error
+           */
+          (error) => {
+            if (error) {
+              return reject(error)
+            }
+
+            return resolve()
+          }
+        )
+      })
     },
     pollingTimeout,
     totalTimeout,
