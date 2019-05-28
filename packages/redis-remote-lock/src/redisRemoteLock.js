@@ -1,4 +1,5 @@
 import { makeRemoteLock } from 'remote-lock'
+import uuidv4 from 'uuid/v4'
 
 /**
  *
@@ -10,7 +11,7 @@ export const makeRedisRemoteLock = ({
   totalTimeout,
   lockKey: _lockKey,
 }) => {
-  const lockKey = _lockKey || 'remote.lock.redis'
+  const lockKey = `${_lockKey || 'remote.lock'}.${uuidv4()}`
 
   return makeRemoteLock({
     getLock: async ({ requestId }) => {

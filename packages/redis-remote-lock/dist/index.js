@@ -125,6 +125,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "makeRedisRemoteLock", function() { return makeRedisRemoteLock; });
 /* harmony import */ var remote_lock__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! remote-lock */ "remote-lock");
 /* harmony import */ var remote_lock__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(remote_lock__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var uuid_v4__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! uuid/v4 */ "uuid/v4");
+/* harmony import */ var uuid_v4__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(uuid_v4__WEBPACK_IMPORTED_MODULE_1__);
+
 
 
 /**
@@ -137,7 +140,7 @@ const makeRedisRemoteLock = ({
   totalTimeout,
   lockKey: _lockKey,
 }) => {
-  const lockKey = _lockKey || 'remote.lock.redis'
+  const lockKey = `${_lockKey || 'remote.lock'}.${uuid_v4__WEBPACK_IMPORTED_MODULE_1___default()()}`
 
   return Object(remote_lock__WEBPACK_IMPORTED_MODULE_0__["makeRemoteLock"])({
     getLock: async ({ requestId }) => {
@@ -211,6 +214,17 @@ const makeRedisRemoteLock = ({
 /***/ (function(module, exports) {
 
 module.exports = require("remote-lock");
+
+/***/ }),
+
+/***/ "uuid/v4":
+/*!**************************!*\
+  !*** external "uuid/v4" ***!
+  \**************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("uuid/v4");
 
 /***/ })
 
