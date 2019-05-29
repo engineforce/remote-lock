@@ -1,6 +1,6 @@
 import redis from 'redis'
 import { equals } from 'ramda'
-
+import { promisify } from 'util'
 import { makeRedisRemoteLock } from '../src/redisRemoteLock'
 
 describe('given redisRemoteLock', () => {
@@ -63,9 +63,7 @@ describe('given redisRemoteLock', () => {
       const { redisRemoteLock, redisClient } = getTestContext()
 
       try {
-        await new Promise((resolve, reject) => {
-          redisClient.del('ga1', (error) => (error ? reject(error) : resolve()))
-        })
+        await redisClient.delAsync('ga1')
 
         /**
          * @type {{ requestId: string, hasLock: boolean }[]}
@@ -79,11 +77,7 @@ describe('given redisRemoteLock', () => {
           jest.fn().mockImplementation(async ({ hasLock }) => {
             executedRequests.push({ requestId, hasLock })
             if (hasLock) {
-              await new Promise((resolve, reject) => {
-                redisClient.set('ga1', requestId, (error) =>
-                  error ? reject(error) : resolve()
-                )
-              })
+              await redisClient.setAsync('ga1', requestId)
             }
           })
 
@@ -116,26 +110,10 @@ describe('given redisRemoteLock', () => {
         return {
           requests,
           executedRequests,
-          ga: await new Promise((resolve, reject) => {
-            redisClient.get('ga1', (error, result) => {
-              if (error) {
-                return reject(error)
-              }
-
-              return resolve(result)
-            })
-          }),
+          ga: await redisClient.getAsync('ga1'),
         }
       } finally {
-        await new Promise((resolve, reject) => {
-          redisClient.quit((error) => {
-            if (error) {
-              return reject(error)
-            }
-
-            return resolve()
-          })
-        })
+        await redisClient.quitAsync()
       }
     }
   })
@@ -199,9 +177,7 @@ describe('given redisRemoteLock', () => {
       const { redisRemoteLock, redisClient } = getTestContext()
 
       try {
-        await new Promise((resolve, reject) => {
-          redisClient.del('ga2', (error) => (error ? reject(error) : resolve()))
-        })
+        await redisClient.delAsync('ga2')
 
         /**
          * @type {{ requestId: string, hasLock: boolean }[]}
@@ -215,11 +191,7 @@ describe('given redisRemoteLock', () => {
           jest.fn().mockImplementation(async ({ hasLock }) => {
             executedRequests.push({ requestId, hasLock })
             if (hasLock) {
-              await new Promise((resolve, reject) => {
-                redisClient.set('ga2', requestId, (error) =>
-                  error ? reject(error) : resolve()
-                )
-              })
+              await redisClient.setAsync('ga2', requestId)
             }
           })
 
@@ -228,15 +200,7 @@ describe('given redisRemoteLock', () => {
          */
         const makeSkipLock = (requestId) =>
           jest.fn().mockImplementation(async () => {
-            return await new Promise((resolve, reject) => {
-              redisClient.get('ga2', (error, gaValue) => {
-                if (error) {
-                  return reject(error)
-                }
-
-                return resolve(gaValue != undefined)
-              })
-            })
+            return (await redisClient.getAsync('ga2')) != undefined
           })
 
         /**
@@ -274,26 +238,10 @@ describe('given redisRemoteLock', () => {
         return {
           requests,
           executedRequests,
-          ga: await new Promise((resolve, reject) => {
-            redisClient.get('ga2', (error, result) => {
-              if (error) {
-                return reject(error)
-              }
-
-              return resolve(result)
-            })
-          }),
+          ga: await redisClient.getAsync('ga2'),
         }
       } finally {
-        await new Promise((resolve, reject) => {
-          redisClient.quit((error) => {
-            if (error) {
-              return reject(error)
-            }
-
-            return resolve()
-          })
-        })
+        await redisClient.quitAsync()
       }
     }
   })
@@ -309,7 +257,15 @@ function getTestContext() {
   })
 
   return {
-    redisClient,
+    redisClient: {
+      getAsync: promisify(redisClient.get).bind(redisClient),
+      setAsync: promisify(redisClient.set).bind(redisClient),
+      /**
+       * @type {(arg1: string) => Promise<any>}
+       */
+      delAsync: promisify(redisClient.del).bind(redisClient),
+      quitAsync: promisify(redisClient.quit).bind(redisClient),
+    },
     redisRemoteLock,
   }
 }

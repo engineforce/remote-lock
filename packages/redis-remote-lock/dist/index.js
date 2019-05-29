@@ -127,6 +127,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var remote_lock__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(remote_lock__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var uuid_v4__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! uuid/v4 */ "uuid/v4");
 /* harmony import */ var uuid_v4__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(uuid_v4__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var util__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! util */ "util");
+/* harmony import */ var util__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(util__WEBPACK_IMPORTED_MODULE_2__);
+
 
 
 
@@ -142,61 +145,19 @@ const makeRedisRemoteLock = ({
 }) => {
   const lockKey = `${_lockKey || 'remote.lock'}.${uuid_v4__WEBPACK_IMPORTED_MODULE_1___default()()}`
 
+  const getAsync = Object(util__WEBPACK_IMPORTED_MODULE_2__["promisify"])(redis.get).bind(redis)
+  const setAsync = Object(util__WEBPACK_IMPORTED_MODULE_2__["promisify"])(redis.set).bind(redis)
+  const delAsync = Object(util__WEBPACK_IMPORTED_MODULE_2__["promisify"])(redis.del).bind(redis)
+
   return Object(remote_lock__WEBPACK_IMPORTED_MODULE_0__["makeRemoteLock"])({
     getLock: async ({ requestId }) => {
-      return new Promise((resolve, reject) => {
-        redis.get(
-          lockKey,
-          /**
-           * @param {any} error
-           * @param {string} lockValue
-           */
-          (error, lockValue) => {
-            if (error) {
-              return reject(error)
-            }
-
-            return resolve(lockValue)
-          }
-        )
-      })
+      return getAsync(lockKey)
     },
     setLock: async ({ requestId, timeout }) => {
-      return new Promise((resolve, reject) => {
-        redis.set(
-          lockKey,
-          requestId,
-          'EX',
-          timeout / 1000,
-          /**
-           * @param {any} error
-           */
-          (error) => {
-            if (error) {
-              return reject(error)
-            }
-
-            return resolve()
-          }
-        )
-      })
+      return setAsync(lockKey, requestId, 'EX', timeout / 1000)
     },
     releaseLock: async ({ requestId }) => {
-      return new Promise((resolve, reject) => {
-        redis.del(
-          lockKey,
-          /**
-           * @param {any} error
-           */
-          (error) => {
-            if (error) {
-              return reject(error)
-            }
-
-            return resolve()
-          }
-        )
-      })
+      return delAsync(lockKey)
     },
     pollingTimeout,
     totalTimeout,
@@ -214,6 +175,17 @@ const makeRedisRemoteLock = ({
 /***/ (function(module, exports) {
 
 module.exports = require("remote-lock");
+
+/***/ }),
+
+/***/ "util":
+/*!***********************!*\
+  !*** external "util" ***!
+  \***********************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("util");
 
 /***/ }),
 

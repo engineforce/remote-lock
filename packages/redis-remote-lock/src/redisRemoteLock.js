@@ -1,5 +1,6 @@
 import { makeRemoteLock } from 'remote-lock'
 import uuidv4 from 'uuid/v4'
+import { promisify } from 'util'
 
 /**
  *
@@ -13,61 +14,19 @@ export const makeRedisRemoteLock = ({
 }) => {
   const lockKey = `${_lockKey || 'remote.lock'}.${uuidv4()}`
 
+  const getAsync = promisify(redis.get).bind(redis)
+  const setAsync = promisify(redis.set).bind(redis)
+  const delAsync = promisify(redis.del).bind(redis)
+
   return makeRemoteLock({
     getLock: async ({ requestId }) => {
-      return new Promise((resolve, reject) => {
-        redis.get(
-          lockKey,
-          /**
-           * @param {any} error
-           * @param {string} lockValue
-           */
-          (error, lockValue) => {
-            if (error) {
-              return reject(error)
-            }
-
-            return resolve(lockValue)
-          }
-        )
-      })
+      return getAsync(lockKey)
     },
     setLock: async ({ requestId, timeout }) => {
-      return new Promise((resolve, reject) => {
-        redis.set(
-          lockKey,
-          requestId,
-          'EX',
-          timeout / 1000,
-          /**
-           * @param {any} error
-           */
-          (error) => {
-            if (error) {
-              return reject(error)
-            }
-
-            return resolve()
-          }
-        )
-      })
+      return setAsync(lockKey, requestId, 'EX', timeout / 1000)
     },
     releaseLock: async ({ requestId }) => {
-      return new Promise((resolve, reject) => {
-        redis.del(
-          lockKey,
-          /**
-           * @param {any} error
-           */
-          (error) => {
-            if (error) {
-              return reject(error)
-            }
-
-            return resolve()
-          }
-        )
-      })
+      return delAsync(lockKey)
     },
     pollingTimeout,
     totalTimeout,
