@@ -2,7 +2,6 @@ const nodeExternals = require('webpack-node-externals')
 
 /** @type {import('webpack').Configuration} */
 module.exports = {
-  target: 'node',
   devtool: false,
   mode: 'development',
   externals: [nodeExternals()],
@@ -11,7 +10,6 @@ module.exports = {
     libraryTarget: 'umd',
     filename: 'index.js',
     pathinfo: true,
+    globalObject: `(typeof self !== 'undefined' ? self : this)`,
   },
 }
-
-// webpack -d

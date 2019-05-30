@@ -1,10 +1,11 @@
 {
-  "name": "redis-example",
+  "name": "redis-remote-lock-example",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "tsc"
+    "test": "tsc",
+    "start:bowser": "open index.html"
   },
   "keywords": [],
   "author": "Paul Li",

@@ -1,0 +1,19 @@
+{
+  "name": "remote-lock-example",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "tsc",
+    "start:bowser": "open index.html"
+  },
+  "keywords": [],
+  "author": "Paul Li",
+  "license": "MIT",
+  "dependencies": {
+    "remote-lock": "^1.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^3.4.2"
+  }
+}

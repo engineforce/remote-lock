@@ -7,7 +7,7 @@
 		exports["remoteLock"] = factory();
 	else
 		root["remoteLock"] = factory();
-})(global, function() {
+})((typeof self !== 'undefined' ? self : this), function() {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
