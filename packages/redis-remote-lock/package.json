@@ -23,6 +23,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.4.3",
+    "@babel/plugin-transform-runtime": "^7.4.4",
     "@babel/preset-env": "^7.4.3",
     "babel-jest": "^24.7.1",
     "babel-loader": "^8.0.6",
@@ -35,6 +36,7 @@
     "webpack-node-externals": "^1.7.2"
   },
   "dependencies": {
+    "@babel/runtime": "^7.4.5",
     "remote-lock": "^1.0.0"
   }
 }

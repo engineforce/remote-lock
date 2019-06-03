@@ -10,14 +10,7 @@ module.exports = {
       },
     ],
   ],
-  plugins: [
-    [
-      '@babel/plugin-transform-runtime',
-      {
-        corejs: 2,
-      },
-    ],
-  ],
+  plugins: [['@babel/plugin-transform-runtime']],
   env: {
     test: {
       presets: [
