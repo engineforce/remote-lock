@@ -17,15 +17,17 @@
   "repository": "https://github.com/engineforce/remote-lock/tree/master/packages/remote-lock",
   "scripts": {
     "build": "webpack",
-    "test": "tsc && npm run test:unit && npm run test:integration",
+    "test": "tsc && npm run test:unit",
     "test:unit": "jest --testPathPattern \\.unit\\.test\\. --coverage",
     "test:unit:dev": "jest --testPathPattern \\.unit\\.test\\. --watch",
     "test:integration": "jest --testPathPattern \\.integration\\.test\\."
   },
   "devDependencies": {
     "@babel/core": "^7.4.3",
+    "@babel/plugin-transform-runtime": "^7.4.4",
     "@babel/preset-env": "^7.4.3",
     "babel-jest": "^24.7.1",
+    "babel-loader": "^8.0.6",
     "jest": "^24.7.0",
     "lolex": "^3.1.0",
     "ramda": "^0.26.1",
@@ -33,5 +35,8 @@
     "webpack": "^4.29.6",
     "webpack-cli": "^3.3.0",
     "webpack-node-externals": "^1.7.2"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.4.5"
   }
 }

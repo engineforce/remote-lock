@@ -2,6 +2,7 @@ import redis from 'redis'
 import { equals } from 'ramda'
 import { promisify } from 'util'
 import { makeRedisRemoteLock } from '../src/redisRemoteLock'
+const { REDIS_PORT } = process.env
 
 describe('given redisRemoteLock', () => {
   describe('when calling redisRemoteLock 3 times in random order without skipLock', () => {
@@ -249,7 +250,7 @@ describe('given redisRemoteLock', () => {
 
 function getTestContext() {
   const redisClient = redis.createClient({
-    port: 6399,
+    port: REDIS_PORT ? parseInt(REDIS_PORT) : 6399,
   })
 
   const redisRemoteLock = makeRedisRemoteLock({
