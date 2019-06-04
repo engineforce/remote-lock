@@ -6,7 +6,7 @@ A simple implementation of [mutex](https://stackoverflow.com/questions/2332765/l
 
 As we all know that [AWS Lambda](https://aws.amazon.com/lambda/) can scale out infinitely, i.e., infinite concurrency, but many resources (e.g., Relational Database, External API, etc.) cannot.
 
-Refer to [example 2](#example-2), I have used this library to resolve a throttling issue from external API by allowing only one AWS Lambda to call external API and set the result in the cache so that other AWS Lambda can operate with the cached result.
+Refer to [example 2](#example-2-limit-number-of-calls-to-external-api), I have used this library to resolve a throttling issue from external API by allowing only one AWS Lambda to call external API and set the result in the cache so that other AWS Lambda can operate with the cached result.
 
 ## Example 1: Increment shared count
 
@@ -39,7 +39,7 @@ remoteLock({
     requestId: 'process 1',
     exec: async () => {
       const sharedCount = await getAsync('redis.sharedCount') || 0
-      await setAsync('redis.sharedCount', sharedCount++)
+      await setAsync('redis.sharedCount', ++sharedCount)
     }
 })
 
@@ -50,7 +50,7 @@ remoteLock({
     requestId: 'process 2',
     exec: () => {
       const sharedCount = await getAsync('redis.sharedCount') || 0
-      await setAsync('redis.sharedCount', sharedCount++)
+      await setAsync('redis.sharedCount', ++sharedCount)
     }
 })
 
