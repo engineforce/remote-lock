@@ -2339,8 +2339,9 @@ var makeRedisRemoteLock = function makeRedisRemoteLock(_ref) {
   var redis = _ref.redis,
       pollingTimeout = _ref.pollingTimeout,
       totalTimeout = _ref.totalTimeout,
-      _lockKey = _ref.lockKey;
-  var lockKey = "".concat(_lockKey || 'remote.lock', ".").concat(generateUUID());
+      _ref$lockKey = _ref.lockKey,
+      lockKey = _ref$lockKey === void 0 ? 'redis.remote.lock' : _ref$lockKey;
+  console.assert(redis != undefined, 'redis cannot be empty.');
   var getAsync = promisify(redis.get).bind(redis);
   var setAsync = promisify(redis.set).bind(redis);
   var delAsync = promisify(redis.del).bind(redis);
@@ -2348,16 +2349,14 @@ var makeRedisRemoteLock = function makeRedisRemoteLock(_ref) {
     getLock: function () {
       var _getLock = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1___default()(
       /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee(_ref2) {
-        var requestId;
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                requestId = _ref2.requestId;
                 return _context.abrupt("return", getAsync(lockKey));
 
-              case 2:
+              case 1:
               case "end":
                 return _context.stop();
             }
@@ -2365,7 +2364,7 @@ var makeRedisRemoteLock = function makeRedisRemoteLock(_ref) {
         }, _callee);
       }));
 
-      function getLock(_x) {
+      function getLock() {
         return _getLock.apply(this, arguments);
       }
 
@@ -2374,13 +2373,13 @@ var makeRedisRemoteLock = function makeRedisRemoteLock(_ref) {
     setLock: function () {
       var _setLock = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1___default()(
       /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2(_ref3) {
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2(_ref2) {
         var requestId, timeout;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                requestId = _ref3.requestId, timeout = _ref3.timeout;
+                requestId = _ref2.requestId, timeout = _ref2.timeout;
                 return _context2.abrupt("return", setAsync(lockKey, requestId, 'EX', timeout / 1000));
 
               case 2:
@@ -2391,7 +2390,7 @@ var makeRedisRemoteLock = function makeRedisRemoteLock(_ref) {
         }, _callee2);
       }));
 
-      function setLock(_x2) {
+      function setLock(_x) {
         return _setLock.apply(this, arguments);
       }
 
@@ -2400,16 +2399,14 @@ var makeRedisRemoteLock = function makeRedisRemoteLock(_ref) {
     releaseLock: function () {
       var _releaseLock = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1___default()(
       /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee3(_ref4) {
-        var requestId;
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee3() {
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee3$(_context3) {
           while (1) {
             switch (_context3.prev = _context3.next) {
               case 0:
-                requestId = _ref4.requestId;
                 return _context3.abrupt("return", delAsync(lockKey));
 
-              case 2:
+              case 1:
               case "end":
                 return _context3.stop();
             }
@@ -2417,7 +2414,7 @@ var makeRedisRemoteLock = function makeRedisRemoteLock(_ref) {
         }, _callee3);
       }));
 
-      function releaseLock(_x3) {
+      function releaseLock() {
         return _releaseLock.apply(this, arguments);
       }
 
@@ -2456,21 +2453,6 @@ function promisify(fn) {
       });
     }
   );
-}
-
-function generateUUID() {
-  // Public Domain/MIT
-  var d = new Date().getTime();
-
-  if (typeof performance !== 'undefined' && typeof performance.now === 'function') {
-    d += performance.now(); //use high-precision timer if available
-  }
-
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-    var r = (d + Math.random() * 16) % 16 | 0;
-    d = Math.floor(d / 16);
-    return (c === 'x' ? r : r & 0x3 | 0x8).toString(16);
-  });
 }
 
 /***/ })
